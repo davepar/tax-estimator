@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en" ng-app="TaxEstimator">
+  <head>
+    <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.8/angular.js"></script>
+    <script src="http://angular-ui.github.io/bootstrap/ui-bootstrap-tpls-0.10.0.js"></script>
+    <script src="ui-utils.min.js"></script>
+    <script src="tax.js"></script>
+    <link href="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css"
+        rel="stylesheet">
+  </head>
+  <body>
+
+<div class="container" ng-controller="TaxEstimatorCtrl">
+  <!-- <h1>Tax Estimator</h1> -->
+  <h1>Angular Experiments</h1>
+  <p>This form will estimate the values you should use on your W-4 form.
+      Fill in the values you plan to use for this year's taxes. Referring to
+      last year's taxes may help. None of this information will leave your
+      browser.
+  <form role="form" name="taxForm">
+    <div class="row">
+      <div class="col-md-4">
+        <h3>Basic info</h3>
+        <div class="form-group">
+          <label for="filingStatus" class="control-label">Filing status:</label>
+          <select id="filingStatus" class="form-control" ng-model="basics.filingStatus">
+            <option value="single">Single</option>
+            <option value="joint">Married filing jointly</option>
+            <option value="separate">Married filing separately</option>
+            <option value="head">Head of household</option>
+          </select>
+        </div>
+        <div class="checkbox">
+          <label>
+            <input type="checkbox" ng-model="basics.cannotClaimSelf">
+            Somebody else is claiming me as a dependent
+          </label>
+        </div>
+        <div class="checkbox">
+          <label>
+            <input type="checkbox" ng-model="basics.multipleJobs">
+            I have more than one job
+          </label>
+        </div>
+        <div class="checkbox" ng-show="isMarried()">
+          <label>
+            <input type="checkbox" ng-model="basics.spouseJob">
+            My spouse has a job
+          </label>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <h3>Paycheck info</h3>
+        <div class="form-group has-feedback"
+            ng-class="{'has-error': taxForm.paychecks.$dirty && taxForm.paychecks.$invalid}">
+          <label for="paychecks" class="control-label">Number of paychecks</label>
+          <input type="text" id="paychecks" name="paychecks" class="form-control"
+              ng-model="paychecks.total" required ui-validate="'validatePayPeriods($value)'"
+              popover="Total number of paychecks you will receive this year"
+              popover-placement="bottom" popover-trigger="mouseenter">
+          <span class="glyphicon form-control-feedback"
+              ng-class="taxForm.paychecks.$invalid ? 'glyphicon-remove' : 'glyphicon-ok'"></span>
+          <span class="help-block" ng-show="taxForm.paychecks.$error.validator">
+            Should be a number between 1 and 366.
+          </span>
+        </div>
+        <div class="form-group has-feedback"
+            ng-class="{'has-error': taxForm.paychecksRemaining.$dirty && taxForm.paychecksRemaining.$invalid}">
+          <label for="paychecksRemaining" class="control-label">Paychecks remaining</label>
+          <input type="text" id="paychecksRemaining" name="paychecksRemaining"
+              class="form-control"
+              ng-model="paychecks.remaining" required ui-validate="'validatePayPeriods($value)'"
+              popover="Number of paychecks left this year"
+              popover-placement="bottom" popover-trigger="mouseenter">
+          <span class="glyphicon form-control-feedback"
+              ng-class="taxForm.paychecksRemaining.$invalid ? 'glyphicon-remove' : 'glyphicon-ok'"></span>
+          <span class="help-block" ng-show="taxForm.paychecksRemaining.$error.validator">
+            Should be a number between 1 and 366.
+          </span>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <h3>Results</h3>
+        <p>Allowances: {{ numAllowances() }}
+        <br><br>
+        <button type="button" class="btn btn-default" ng-click="debug()">Debug</button>
+      </div>
+    </div>
+  </form>
+</div>
+  </body>
+</html>
