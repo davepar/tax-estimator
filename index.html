@@ -15,8 +15,8 @@
   <h1>Angular Experiments</h1>
   <p>This form will estimate the values you should use on your W-4 form.
       Fill in the values you plan to use for this year's taxes. Referring to
-      last year's taxes may help. None of this information will leave your
-      browser.
+      last year's taxes may help. None of your personal information will be
+      transmitted or stored.
   <form role="form" name="taxForm">
     <div class="row">
       <div class="col-md-4">
@@ -46,6 +46,40 @@
           <label>
             <input type="checkbox" ng-model="basics.spouseJob">
             My spouse has a job
+          </label>
+        </div>
+
+        <div class="form-group has-feedback"
+            ng-class="{'has-error': taxForm.dependents.$dirty && taxForm.dependents.$invalid}">
+          <label for="dependents" class="control-label">Number of dependents 2</label>
+          <input type="text" id="dependents" name="dependents" class="form-control"
+              ng-model="basics.dependents" required ng-pattern="/^\d+$/"
+              popover="Total number of dependents you plan on claiming"
+              popover-placement="bottom" popover-trigger="mouseenter">
+          <span class="glyphicon form-control-feedback"
+              ng-class="taxForm.dependents.$invalid ? 'glyphicon-remove' : 'glyphicon-ok'"></span>
+          <span class="help-block" ng-show="taxForm.dependents.$invalid">
+            Should be a whole number, 0 or more
+          </span>
+        </div>
+        <div class="form-group has-feedback"
+            ng-class="{'has-error': taxForm.children.$dirty && taxForm.children.$invalid}">
+          <label for="children" class="control-label">Children eligible tax credit</label>
+          <input type="text" id="children" name="children" class="form-control"
+              ng-model="basics.children" required ng-pattern="/^\d+$/"
+              popover="See publication 972 for more info on the child tax credit"
+              popover-placement="bottom" popover-trigger="mouseenter">
+          <span class="glyphicon form-control-feedback"
+              ng-class="taxForm.children.$invalid ? 'glyphicon-remove' : 'glyphicon-ok'"></span>
+          <span class="help-block" ng-show="taxForm.children.$invalid">
+            Should be a whole number, 0 or more
+          </span>
+        </div>
+        <div class="checkbox">
+          <label popover="See publication 503 for more info"
+              popover-placement="bottom" popover-trigger="mouseenter">
+            <input type="checkbox" ng-model="basics.highChildCare">
+            I will have more than $2,000 in child or dependent care expenses.
           </label>
         </div>
       </div>
@@ -78,12 +112,28 @@
             Should be a number between 1 and 366.
           </span>
         </div>
+        <div class="form-group has-feedback"
+            ng-class="{'has-error': taxForm.paychecksAmount.$dirty && taxForm.paychecksAmount.$invalid}">
+          <label for="paychecksAmount" class="control-label">Total salary</label>
+          <input type="text" id="paychecksAmount" name="paychecksAmount"
+              class="form-control"
+              ng-model="paychecks.amount" required ng-pattern="/^\$?[0-9,]+(\.\d{0,2})?$/"
+              popover="Total salary you expect for the year"
+              popover-placement="bottom" popover-trigger="mouseenter">
+          <span class="glyphicon form-control-feedback"
+              ng-class="taxForm.paychecksAmount.$invalid ? 'glyphicon-remove' : 'glyphicon-ok'"></span>
+          <span class="help-block" ng-show="taxForm.paychecksAmount.$invalid">
+            Should be a dollar amount.
+          </span>
+        </div>
       </div>
       <div class="col-md-4">
         <h3>Results</h3>
         <p>Allowances: {{ numAllowances() }}
+        <p>Salary: {{ getSalary() }}
         <br><br>
         <button type="button" class="btn btn-default" ng-click="debug()">Debug</button>
+        <tax-input></tax-input>
       </div>
     </div>
   </form>

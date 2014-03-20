@@ -1,0 +1,16 @@
+<div class="form-group has-feedback"
+    ng-class="{'has-error': taxFormField.$dirty &&
+        taxFormField.$invalid}">
+  <label for="{{ taxFieldName }}" class="control-label">{{ taxLabel }}</label>
+  <input type="text" id="{{ taxFieldName }}" name="{{ taxFieldName }}" class="form-control"
+      ng-model="taxModel" required ng-pattern="{{ taxPattern }}"
+      popover="{{ taxTooltip }}"
+      popover-placement="bottom" popover-trigger="mouseenter">
+  <span class="glyphicon form-control-feedback"
+      ng-class="{{ taxFormField }}.$invalid ?
+          'glyphicon-remove' : 'glyphicon-ok'"></span>
+  <span class="help-block" ng-show="{{ taxFormField }}.$invalid">
+    {{ taxHelp }}
+  </span>
+</div>
+<!-- still need ng-model and ng-pattern -->

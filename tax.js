@@ -1,3 +1,8 @@
+// Reference material
+// Angular UI Bootstrap: http://angular-ui.github.io/bootstrap
+// Angular UI Utils: http://angular-ui.github.io/ui-utils for ui-validate
+// Bootstrap CSS: http://getbootstrap.com/css
+
 var myApp = angular.module('TaxEstimator', ['ui.bootstrap', 'ui.utils']);
 
 myApp.controller('TaxEstimatorCtrl', ['$scope', function($scope) {
@@ -5,11 +10,15 @@ myApp.controller('TaxEstimatorCtrl', ['$scope', function($scope) {
     filingStatus: 'single',
     cannotClaimSelf: false,
     multipleJobs: false,
-    spouseJob: false
+    spouseJob: false,
+    dependents: 0,
+    children: 0,
+    highChildCare: false
   };
   $scope.paychecks = {
     total: 26,
-    remaining: 13
+    remaining: 13,
+    amount: '$1,000'
   };
 
   $scope.debug = function() {
@@ -32,8 +41,34 @@ myApp.controller('TaxEstimatorCtrl', ['$scope', function($scope) {
     return value >= 1 && value <= 366;
   };
 
+  $scope.getSalary = function() {
+    return parseInt($scope.paychecks.amount.replace(/\$|,/g, ''));
+  }
+
+  $scope.childTaxCredit = function() {
+    var result = 0;
+    var children = parseInt($scope.basics.children, 10);
+    var salary = $scope.getSalary();
+    if (salary < 65000 || ($scope.isMarried() && salary < 95000)) {
+      result = 2 * children;
+      if (children > 6) {
+        result -= 2;
+      }
+      else if (children > 2) {
+        result -= 1;
+      }
+    }
+    else if (salary < 84000 || ($scope.isMarried() && salary < 119000)) {
+      result = children;
+    }
+    return result;
+  }
+
   $scope.numAllowances = function() {
-    result = 0;
+    var result = 0;
+    if ($scope.taxForm.$invalid) {
+      return 0;
+    }
     // W-4 A
     if (!$scope.basics.cannotClaimSelf) {
       result += 1;
@@ -47,12 +82,19 @@ myApp.controller('TaxEstimatorCtrl', ['$scope', function($scope) {
       result += 2;
     }
     // TODO: wages less than $1500
-    // TODO: W-4 D
+    // W-4 D
+    result += parseInt($scope.basics.dependents, 10);
+
+    // W-4 E
     if ($scope.basics.filingStatus == 'head') {
       result += 1;
     }
-    // TODO: W-4 F
-    // TODO: W-4 G
+    // W-4 F
+    if ($scope.basics.highChildCare) {
+      result += 1;
+    }
+    // W-4 G
+    result += $scope.childTaxCredit();
 
     return result;
   };
