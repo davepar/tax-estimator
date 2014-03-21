@@ -99,3 +99,60 @@ myApp.controller('TaxEstimatorCtrl', ['$scope', function($scope) {
     return result;
   };
 }]);
+
+myApp.directive('taxTextInput', function($compile) {
+  return {
+    restrict: 'E',
+    priority: 100,
+    compile: function(element, attrs) {
+      // Get form name from parent form
+      var parent = element[0].parentNode;
+      while (parent && parent.tagName != 'FORM') {
+        parent = parent.parentNode;
+      }
+      if (!parent) {
+        throw 'taxTextInput must have a FORM parent';
+      }
+
+      // Construct field name from model value
+      if (!attrs.hasOwnProperty('ngModel')) {
+        throw 'taxTextInput requires ngModel';
+      }
+      var formName = parent.getAttribute('name');
+      var fieldName = attrs.ngModel.replace('.', '');
+      var formFieldName = formName + '.' + fieldName;
+      // Default type to "text"
+      if (!attrs.hasOwnProperty('type')) {
+        attrs.type = 'text';
+      }
+      // Stringify the extra attributes
+      var expectedAttrs = {
+        'taxLabel': true,
+        'taxTooltip': true,
+        'taxHelp': true
+      };
+      var addParams = [];
+      for (key in attrs.$attr) {
+        if (!(key in expectedAttrs)) {
+          dashedKey = key.replace(/([A-Z])/g, '-$1').toLowerCase();
+          addParams.push(dashedKey + '="' + attrs[key] + '"');
+        }
+      }
+      var node = '<div class="form-group has-feedback" ' +
+          'ng-class="{\'has-error\': ' + formFieldName + '.$dirty && ' +
+          formFieldName + '.$invalid}"><label for="' + fieldName +
+          '" class="control-label">' + attrs['taxLabel'] +
+          '</label><input id="' + fieldName + '" name="' +
+          fieldName + '" class="form-control" ' + addParams.join(' ') +
+          ' popover="' + attrs['taxTooltip'] +
+          '" popover-placement="bottom" popover-trigger="mouseenter">' +
+          '<span class="glyphicon form-control-feedback" ng-class="' +
+          formFieldName + '.$invalid ? \'glyphicon-remove\' : \'glyphicon-ok\'">' +
+          '</span><span class="help-block" ng-show="' + formFieldName +
+          '.$invalid">' + attrs['taxHelp'] + '</span></div>';
+      var e = angular.element(node);
+      $compile(e.contents());
+      element.replaceWith(e);
+    }
+  }
+});

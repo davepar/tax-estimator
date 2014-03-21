@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en" ng-app="TaxEstimator">
   <head>
-    <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.8/angular.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.14/angular.js"></script>
     <script src="http://angular-ui.github.io/bootstrap/ui-bootstrap-tpls-0.10.0.js"></script>
     <script src="ui-utils.min.js"></script>
     <script src="tax.js"></script>
@@ -49,7 +49,17 @@
           </label>
         </div>
 
-        <div class="form-group has-feedback"
+        <tax-text-input ng-model="basics.dependents"
+            tax-label="Number of dependents"
+            tax-tooltip="Total number of dependents you plan on claiming"
+            tax-help="Should be a whole number, 0 or more"
+            required ng-pattern="/^\d+$/"></tax-text-input>
+        <tax-text-input ng-model="basics.children"
+            tax-label="Children eligible tax credit"
+            tax-tooltip="See publication 972 for more info on the child tax credit"
+            tax-help="Should be a whole number, 0 or more"
+            required ng-pattern="/^\d+$/"></tax-text-input>
+        <!-- <div class="form-group has-feedback"
             ng-class="{'has-error': taxForm.dependents.$dirty && taxForm.dependents.$invalid}">
           <label for="dependents" class="control-label">Number of dependents 2</label>
           <input type="text" id="dependents" name="dependents" class="form-control"
@@ -61,20 +71,7 @@
           <span class="help-block" ng-show="taxForm.dependents.$invalid">
             Should be a whole number, 0 or more
           </span>
-        </div>
-        <div class="form-group has-feedback"
-            ng-class="{'has-error': taxForm.children.$dirty && taxForm.children.$invalid}">
-          <label for="children" class="control-label">Children eligible tax credit</label>
-          <input type="text" id="children" name="children" class="form-control"
-              ng-model="basics.children" required ng-pattern="/^\d+$/"
-              popover="See publication 972 for more info on the child tax credit"
-              popover-placement="bottom" popover-trigger="mouseenter">
-          <span class="glyphicon form-control-feedback"
-              ng-class="taxForm.children.$invalid ? 'glyphicon-remove' : 'glyphicon-ok'"></span>
-          <span class="help-block" ng-show="taxForm.children.$invalid">
-            Should be a whole number, 0 or more
-          </span>
-        </div>
+        </div> -->
         <div class="checkbox">
           <label popover="See publication 503 for more info"
               popover-placement="bottom" popover-trigger="mouseenter">
@@ -85,52 +82,28 @@
       </div>
       <div class="col-md-4">
         <h3>Paycheck info</h3>
-        <div class="form-group has-feedback"
-            ng-class="{'has-error': taxForm.paychecks.$dirty && taxForm.paychecks.$invalid}">
-          <label for="paychecks" class="control-label">Number of paychecks</label>
-          <input type="text" id="paychecks" name="paychecks" class="form-control"
-              ng-model="paychecks.total" required ui-validate="'validatePayPeriods($value)'"
-              popover="Total number of paychecks you will receive this year"
-              popover-placement="bottom" popover-trigger="mouseenter">
-          <span class="glyphicon form-control-feedback"
-              ng-class="taxForm.paychecks.$invalid ? 'glyphicon-remove' : 'glyphicon-ok'"></span>
-          <span class="help-block" ng-show="taxForm.paychecks.$error.validator">
-            Should be a number between 1 and 366.
-          </span>
-        </div>
-        <div class="form-group has-feedback"
-            ng-class="{'has-error': taxForm.paychecksRemaining.$dirty && taxForm.paychecksRemaining.$invalid}">
-          <label for="paychecksRemaining" class="control-label">Paychecks remaining</label>
-          <input type="text" id="paychecksRemaining" name="paychecksRemaining"
-              class="form-control"
-              ng-model="paychecks.remaining" required ui-validate="'validatePayPeriods($value)'"
-              popover="Number of paychecks left this year"
-              popover-placement="bottom" popover-trigger="mouseenter">
-          <span class="glyphicon form-control-feedback"
-              ng-class="taxForm.paychecksRemaining.$invalid ? 'glyphicon-remove' : 'glyphicon-ok'"></span>
-          <span class="help-block" ng-show="taxForm.paychecksRemaining.$error.validator">
-            Should be a number between 1 and 366.
-          </span>
-        </div>
-        <div class="form-group has-feedback"
-            ng-class="{'has-error': taxForm.paychecksAmount.$dirty && taxForm.paychecksAmount.$invalid}">
-          <label for="paychecksAmount" class="control-label">Total salary</label>
-          <input type="text" id="paychecksAmount" name="paychecksAmount"
-              class="form-control"
-              ng-model="paychecks.amount" required ng-pattern="/^\$?[0-9,]+(\.\d{0,2})?$/"
-              popover="Total salary you expect for the year"
-              popover-placement="bottom" popover-trigger="mouseenter">
-          <span class="glyphicon form-control-feedback"
-              ng-class="taxForm.paychecksAmount.$invalid ? 'glyphicon-remove' : 'glyphicon-ok'"></span>
-          <span class="help-block" ng-show="taxForm.paychecksAmount.$invalid">
-            Should be a dollar amount.
-          </span>
-        </div>
+        <tax-text-input ng-model="paychecks.total"
+            tax-label="Number of paychecks"
+            tax-tooltip="Total number of paychecks you will receive this year"
+            tax-help="Should be a number between 1 and 366."
+            required ui-validate="'validatePayPeriods($value)'"></tax-text-input>
+        <tax-text-input ng-model="paychecks.remaining"
+            tax-label="Paychecks remaining"
+            tax-tooltip="Number of paychecks left this year"
+            tax-help="Should be a number between 1 and 366."
+            required ui-validate="'validatePayPeriods($value)'"></tax-text-input>
+        <tax-text-input ng-model="paychecks.amount"
+            tax-label="Total salary"
+            tax-tooltip="Total salary you expect for the year"
+            tax-help="Should be a dollar amount."
+            required ng-pattern="/^\$?[0-9,]+(\.\d{0,2})?$/"></tax-text-input>
       </div>
       <div class="col-md-4">
         <h3>Results</h3>
         <p>Allowances: {{ numAllowances() }}
         <p>Salary: {{ getSalary() }}
+        <p>Dependents: {{ basics.dependents }}
+        <p>Invalid: {{ taxForm.basicsdependents.$invalid }}
         <br><br>
         <button type="button" class="btn btn-default" ng-click="debug()">Debug</button>
         <tax-input></tax-input>
