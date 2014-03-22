@@ -100,6 +100,12 @@ myApp.controller('TaxEstimatorCtrl', ['$scope', function($scope) {
   };
 }]);
 
+/**
+ * Change a tax-text-input element into a Bootstrap CSS compatible input field. Any extra
+ * attributes will be added to the produced input element.
+ * Required: ng-model
+ * Optional: tax-label, tax-tooltip, and tax-help
+ */
 myApp.directive('taxTextInput', function($compile) {
   return {
     restrict: 'E',
