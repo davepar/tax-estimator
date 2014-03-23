@@ -3,7 +3,7 @@
   <head>
     <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.14/angular.js"></script>
     <script src="http://angular-ui.github.io/bootstrap/ui-bootstrap-tpls-0.10.0.js"></script>
-    <script src="js/ui-utils.min.js"></script>
+    <script src="js/lib/ui-utils.min.js"></script>
     <script src="js/tax.js"></script>
     <link href="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css"
         rel="stylesheet">
@@ -59,19 +59,6 @@
             tax-tooltip="See publication 972 for more info on the child tax credit"
             tax-help="Should be a whole number, 0 or more"
             required ng-pattern="/^\d+$/"></tax-text-input>
-        <!-- <div class="form-group has-feedback"
-            ng-class="{'has-error': taxForm.dependents.$dirty && taxForm.dependents.$invalid}">
-          <label for="dependents" class="control-label">Number of dependents 2</label>
-          <input type="text" id="dependents" name="dependents" class="form-control"
-              ng-model="basics.dependents" required ng-pattern="/^\d+$/"
-              popover="Total number of dependents you plan on claiming"
-              popover-placement="bottom" popover-trigger="mouseenter">
-          <span class="glyphicon form-control-feedback"
-              ng-class="taxForm.dependents.$invalid ? 'glyphicon-remove' : 'glyphicon-ok'"></span>
-          <span class="help-block" ng-show="taxForm.dependents.$invalid">
-            Should be a whole number, 0 or more
-          </span>
-        </div> -->
         <div class="checkbox">
           <label popover="See publication 503 for more info"
               popover-placement="bottom" popover-trigger="mouseenter">

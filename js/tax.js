@@ -102,9 +102,9 @@ myApp.controller('TaxEstimatorCtrl', ['$scope', function($scope) {
 
 /**
  * Change a tax-text-input element into a Bootstrap CSS compatible input field. Any extra
- * attributes will be added to the produced input element.
- * Required: ng-model
- * Optional: tax-label, tax-tooltip, and tax-help
+ * attributes will be added to the produced input element, e.g. required ng-pattern="/^\d+$/"
+ * Required: ng-model, tax-label
+ * Optional: tax-tooltip, and tax-help
  */
 myApp.directive('taxTextInput', function($compile) {
   return {
@@ -144,18 +144,26 @@ myApp.directive('taxTextInput', function($compile) {
           addParams.push(dashedKey + '="' + attrs[key] + '"');
         }
       }
+      var popover = '';
+      if (attrs.hasOwnProperty('taxTooltip')) {
+        popover = ' popover="' + attrs['taxTooltip'] +
+            '" popover-placement="bottom" popover-trigger="mouseenter"';
+      }
+      var helpblock = '';
+      if (attrs.hasOwnProperty('taxHelp')) {
+        helpblock = '<span class="help-block" ng-show="' + formFieldName +
+          '.$invalid">' + attrs['taxHelp'] + '</span>';
+      }
       var node = '<div class="form-group has-feedback" ' +
           'ng-class="{\'has-error\': ' + formFieldName + '.$dirty && ' +
           formFieldName + '.$invalid}"><label for="' + fieldName +
           '" class="control-label">' + attrs['taxLabel'] +
           '</label><input id="' + fieldName + '" name="' +
           fieldName + '" class="form-control" ' + addParams.join(' ') +
-          ' popover="' + attrs['taxTooltip'] +
-          '" popover-placement="bottom" popover-trigger="mouseenter">' +
+          popover + '>' +
           '<span class="glyphicon form-control-feedback" ng-class="' +
           formFieldName + '.$invalid ? \'glyphicon-remove\' : \'glyphicon-ok\'">' +
-          '</span><span class="help-block" ng-show="' + formFieldName +
-          '.$invalid">' + attrs['taxHelp'] + '</span></div>';
+          '</span>' + helpblock + '</div>';
       var e = angular.element(node);
       $compile(e.contents());
       element.replaceWith(e);
