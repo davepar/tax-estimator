@@ -144,26 +144,26 @@ myApp.directive('taxTextInput', function($compile) {
           addParams.push(dashedKey + '="' + attrs[key] + '"');
         }
       }
+      var ngClassBlock = 'ng-class="{\'has-error\': ' + formFieldName + '.$dirty && ' +
+          formFieldName + '.$invalid}"';
+      var labelBlock = '<label for="' + fieldName + '" class="control-label">' +
+          attrs['taxLabel'] + '</label>';
       var popover = '';
       if (attrs.hasOwnProperty('taxTooltip')) {
         popover = ' popover="' + attrs['taxTooltip'] +
             '" popover-placement="bottom" popover-trigger="mouseenter"';
       }
-      var helpblock = '';
+      var inputBlock = '<input id="' + fieldName + '" name="' + fieldName + '" ng-model="' +
+          attrs.ngModel + '" class="form-control" ' + addParams.join(' ') + popover + '>';
+      var glyphBlock = '<span class="glyphicon form-control-feedback" ng-class="' + formFieldName +
+          '.$invalid ? \'glyphicon-remove\' : \'glyphicon-ok\'">' + '</span>';
+      var helpBlock = '';
       if (attrs.hasOwnProperty('taxHelp')) {
-        helpblock = '<span class="help-block" ng-show="' + formFieldName +
+        helpBlock = '<span class="help-block" ng-show="' + formFieldName +
           '.$invalid">' + attrs['taxHelp'] + '</span>';
       }
-      var node = '<div class="form-group has-feedback" ' +
-          'ng-class="{\'has-error\': ' + formFieldName + '.$dirty && ' +
-          formFieldName + '.$invalid}"><label for="' + fieldName +
-          '" class="control-label">' + attrs['taxLabel'] +
-          '</label><input id="' + fieldName + '" name="' +
-          fieldName + '" class="form-control" ' + addParams.join(' ') +
-          popover + '>' +
-          '<span class="glyphicon form-control-feedback" ng-class="' +
-          formFieldName + '.$invalid ? \'glyphicon-remove\' : \'glyphicon-ok\'">' +
-          '</span>' + helpblock + '</div>';
+      var node = '<div><div class="form-group has-feedback" ' + ngClassBlock + '>' +
+          labelBlock + inputBlock + glyphBlock + helpBlock + '</div></div>';
       var e = angular.element(node);
       $compile(e.contents());
       element.replaceWith(e);
