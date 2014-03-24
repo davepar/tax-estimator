@@ -112,6 +112,12 @@ describe('TaxEstimatorCtrl', function() {
 
     it('numAllowances should calculate correctly', function() {
       setBasics('single');
+      scope.basics.cannotClaimSelf = true;
+      expect(scope.numAllowances()).toBe(1);
+    });
+
+    it('numAllowances should calculate correctly', function() {
+      setBasics('single');
       scope.paychecks.amount = '$1,000';
       scope.basics.dependents = '1';
       scope.basics.children = '1';
