@@ -57,6 +57,29 @@ describe('TaxEstimatorCtrl', function() {
           'ng-class="abc.def.$invalid ? \'glyphicon-remove\' : \'glyphicon-ok\'"></span>' +
           '</div></div>');
     });
+    it('should include extra attributes', function() {
+      var template = $compile(
+          '<form name="abc"><tax-text-input ng-model="def" tax-label="Field" ' +
+          'required></tax-text-input></form>')($scope);
+      var templateAsHtml = template.html();
+      expect(templateAsHtml).toContain('required');
+    });
+    it('should include tooltip', function() {
+      var template = $compile(
+          '<form name="abc"><tax-text-input ng-model="def" tax-label="Field" ' +
+          'tax-tooltip="ghi"></tax-text-input></form>')($scope);
+      var templateAsHtml = template.html();
+      expect(templateAsHtml).toContain('popover="ghi" popover-placement="bottom" ' +
+          'popover-trigger="mouseenter"');
+    });
+    it('should include help', function() {
+      var template = $compile(
+          '<form name="abc"><tax-text-input ng-model="def" tax-label="Field" ' +
+          'tax-help="jkl"></tax-text-input></form>')($scope);
+      var templateAsHtml = template.html();
+      expect(templateAsHtml).toContain('<span class="help-block" ng-show="abc.def.$invalid">' +
+          'jkl</span>');
+    });
     it('should throw an error for missing form', function() {
       expect(function() {
         $compile('<tax-text-input></tax-text-input>');
