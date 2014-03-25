@@ -102,7 +102,7 @@ myApp.controller('TaxEstimatorCtrl', ['$scope', function($scope) {
 
 /**
  * Change a tax-text-input element into a Bootstrap CSS compatible input field. Any extra
- * attributes will be added to the produced input element, e.g. required ng-pattern="/^\d+$/"
+ * attributes will be added to the generated input element, e.g. required ng-pattern="/^\d+$/"
  * Required: ng-model, tax-label
  * Optional: tax-tooltip, and tax-help
  */
@@ -117,12 +117,12 @@ myApp.directive('taxTextInput', function($compile) {
         parent = parent.parentNode;
       }
       if (!parent) {
-        throw 'taxTextInput must have a FORM parent';
+        throw new Error('taxTextInput must have a FORM parent');
       }
 
       // Construct field name from model value
       if (!attrs.hasOwnProperty('ngModel')) {
-        throw 'taxTextInput requires ngModel';
+        throw new Error('taxTextInput requires ngModel');
       }
       var formName = parent.getAttribute('name');
       var fieldName = attrs.ngModel.replace('.', '');

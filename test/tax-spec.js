@@ -3,158 +3,186 @@
  */
 
 describe('TaxEstimatorCtrl', function() {
-  var scope;
+  var $scope, $compile;
 
   beforeEach(module('TaxEstimator'), []);
-  beforeEach(inject(function($rootScope, $controller) {
-    //create an empty scope
-    scope = $rootScope.$new();
-    //declare the controller and inject our empty scope
-    $controller('TaxEstimatorCtrl', {$scope: scope});
+  beforeEach(inject(function(_$rootScope_, _$controller_, _$compile_) {
+    //create an empty $scope
+    $scope = _$rootScope_.$new();
+    //declare the controller and inject our empty $scope
+    _$controller_('TaxEstimatorCtrl', {$scope: $scope});
+    $compile = _$compile_;
   }));
 
   it('isMarried should correctly detect status', function() {
-    scope.basics.filingStatus = 'single';
-    expect(scope.isMarried()).toBeFalsy();
+    $scope.basics.filingStatus = 'single';
+    expect($scope.isMarried()).toBeFalsy();
 
-    scope.basics.filingStatus = 'head';
-    expect(scope.isMarried()).toBeFalsy();
+    $scope.basics.filingStatus = 'head';
+    expect($scope.isMarried()).toBeFalsy();
 
-    scope.basics.filingStatus = 'joint';
-    expect(scope.isMarried()).toBeTruthy();
+    $scope.basics.filingStatus = 'joint';
+    expect($scope.isMarried()).toBeTruthy();
 
-    scope.basics.filingStatus = 'separate';
-    expect(scope.isMarried()).toBeTruthy();
+    $scope.basics.filingStatus = 'separate';
+    expect($scope.isMarried()).toBeTruthy();
   });
 
   it('validatePayPeriods should validate correctly', function() {
     var value;
-    expect(scope.validatePayPeriods(value)).toBeTruthy();
-    expect(scope.validatePayPeriods('45')).toBeTruthy();
-    expect(scope.validatePayPeriods('x')).toBeFalsy();
-    expect(scope.validatePayPeriods('0')).toBeFalsy();
-    expect(scope.validatePayPeriods('400')).toBeFalsy();
+    expect($scope.validatePayPeriods(value)).toBeTruthy();
+    expect($scope.validatePayPeriods('45')).toBeTruthy();
+    expect($scope.validatePayPeriods('x')).toBeFalsy();
+    expect($scope.validatePayPeriods('0')).toBeFalsy();
+    expect($scope.validatePayPeriods('400')).toBeFalsy();
   });
 
   it('getSalary to clean salary field', function() {
-    scope.paychecks.amount = '$1,000';
-    expect(scope.getSalary()).toBe(1000);
+    $scope.paychecks.amount = '$1,000';
+    expect($scope.getSalary()).toBe(1000);
+  });
+
+  describe('taxTextInput directive', function() {
+    it('should expand correctly', function() {
+      var template = $compile(
+          '<form name="abc"><tax-text-input ng-model="def" tax-label="Field">' +
+          '</tax-text-input></form>')($scope);
+      var templateAsHtml = template.html();
+      expect(templateAsHtml).toBe('<div class="ng-pristine ng-valid">' +
+          '<div class="form-group has-feedback ng-scope" ' +
+          'ng-class="{\'has-error\': abc.def.$dirty &amp;&amp; abc.def.$invalid}">' +
+          '<label for="def" class="control-label">Field</label>' +
+          '<input id="def" name="def" ng-model="def" class="form-control ng-pristine ng-valid">' +
+          '<span class="glyphicon form-control-feedback" ' +
+          'ng-class="abc.def.$invalid ? \'glyphicon-remove\' : \'glyphicon-ok\'"></span>' +
+          '</div></div>');
+    });
+    it('should throw an error for missing form', function() {
+      expect(function() {
+        $compile('<tax-text-input></tax-text-input>');
+      }).toThrow(new Error('taxTextInput must have a FORM parent'));
+    });
+    it('should throw an error for missing ng-model', function() {
+      expect(function() {
+        $compile('<form name="abc"><tax-text-input></tax-text-input></form>');
+      }).toThrow(new Error('taxTextInput requires ngModel'));
+    });
   });
 
   describe('childTaxCredit', function() {
     function setBasics(filingStatus, children, salary) {
-      scope.basics.filingStatus = filingStatus;
-      scope.basics.children = children;
-      scope.paychecks.amount = salary;
+      $scope.basics.filingStatus = filingStatus;
+      $scope.basics.children = children;
+      $scope.paychecks.amount = salary;
     }
 
     it('childTaxCredit should calculate correctly', function() {
       setBasics('single', '2', '$64,999');
-      expect(scope.childTaxCredit()).toBe(4);
+      expect($scope.childTaxCredit()).toBe(4);
     });
 
     it('childTaxCredit should calculate correctly', function() {
       setBasics('single', '4', '$64,999');
-      expect(scope.childTaxCredit()).toBe(7);
+      expect($scope.childTaxCredit()).toBe(7);
     });
 
     it('childTaxCredit should calculate correctly', function() {
       setBasics('single', '7', '$64,999');
-      expect(scope.childTaxCredit()).toBe(12);
+      expect($scope.childTaxCredit()).toBe(12);
     });
 
     it('childTaxCredit should calculate correctly', function() {
       setBasics('joint', '7', '$94,999');
-      expect(scope.childTaxCredit()).toBe(12);
+      expect($scope.childTaxCredit()).toBe(12);
     });
 
     it('childTaxCredit should calculate correctly', function() {
       setBasics('single', '4', '$83,999');
-      expect(scope.childTaxCredit()).toBe(4);
+      expect($scope.childTaxCredit()).toBe(4);
     });
 
     it('childTaxCredit should calculate correctly', function() {
       setBasics('joint', '4', '$118,999');
-      expect(scope.childTaxCredit()).toBe(4);
+      expect($scope.childTaxCredit()).toBe(4);
     });
 
     it('childTaxCredit should calculate correctly', function() {
       setBasics('single', '4', '$84,000');
-      expect(scope.childTaxCredit()).toBe(0);
+      expect($scope.childTaxCredit()).toBe(0);
     });
 
     it('childTaxCredit should calculate correctly', function() {
       setBasics('single', '4', '$119,000');
-      expect(scope.childTaxCredit()).toBe(0);
+      expect($scope.childTaxCredit()).toBe(0);
     });
   });
 
   it('numAllowances should calculate correctly', function() {
-    scope.taxForm = {$invalid: true};
-    expect(scope.numAllowances()).toBe(0);
+    $scope.taxForm = {$invalid: true};
+    expect($scope.numAllowances()).toBe(0);
   });
 
   describe('numAllowances', function() {
     function setBasics(filingStatus) {
-      scope.basics.filingStatus = filingStatus;
-      scope.basics.children = '0';
-      scope.basics.dependents = '0';
+      $scope.basics.filingStatus = filingStatus;
+      $scope.basics.children = '0';
+      $scope.basics.dependents = '0';
     }
 
     beforeEach(function() {
-      scope.taxForm = {$invalid: false};
+      $scope.taxForm = {$invalid: false};
     });
 
     it('numAllowances should calculate correctly', function() {
       setBasics('single');
-      expect(scope.numAllowances()).toBe(2);
+      expect($scope.numAllowances()).toBe(2);
     });
 
     it('numAllowances should calculate correctly', function() {
       setBasics('single');
-      scope.basics.cannotClaimSelf = true;
-      expect(scope.numAllowances()).toBe(1);
+      $scope.basics.cannotClaimSelf = true;
+      expect($scope.numAllowances()).toBe(1);
     });
 
     it('numAllowances should calculate correctly', function() {
       setBasics('single');
-      scope.paychecks.amount = '$1,000';
-      scope.basics.dependents = '1';
-      scope.basics.children = '1';
+      $scope.paychecks.amount = '$1,000';
+      $scope.basics.dependents = '1';
+      $scope.basics.children = '1';
       // self + one-job + dependent + child tax credit (2)
-      expect(scope.numAllowances()).toBe(5);
+      expect($scope.numAllowances()).toBe(5);
     });
 
     it('numAllowances should calculate correctly', function() {
       setBasics('head');
-      expect(scope.numAllowances()).toBe(3);
+      expect($scope.numAllowances()).toBe(3);
     });
 
     it('numAllowances should calculate correctly', function() {
       setBasics('single');
-      scope.basics.highChildCare = true;
-      expect(scope.numAllowances()).toBe(3);
+      $scope.basics.highChildCare = true;
+      expect($scope.numAllowances()).toBe(3);
     });
 
     it('numAllowances should calculate correctly', function() {
       setBasics('joint');
-      scope.basics.multipleJobs = false;
-      scope.basics.spouseJob = false;
-      expect(scope.numAllowances()).toBe(3);
+      $scope.basics.multipleJobs = false;
+      $scope.basics.spouseJob = false;
+      expect($scope.numAllowances()).toBe(3);
     });
 
     it('numAllowances should calculate correctly', function() {
       setBasics('joint');
-      scope.basics.multipleJobs = true;
-      scope.basics.spouseJob = false;
-      expect(scope.numAllowances()).toBe(1);
+      $scope.basics.multipleJobs = true;
+      $scope.basics.spouseJob = false;
+      expect($scope.numAllowances()).toBe(1);
     });
 
     it('numAllowances should calculate correctly', function() {
       setBasics('joint');
-      scope.basics.multipleJobs = false;
-      scope.basics.spouseJob = true;
-      expect(scope.numAllowances()).toBe(1);
+      $scope.basics.multipleJobs = false;
+      $scope.basics.spouseJob = true;
+      expect($scope.numAllowances()).toBe(1);
     });
   });
 });
