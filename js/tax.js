@@ -162,11 +162,9 @@ myApp.directive('taxTextInput', function($compile) {
         helpBlock = '<span class="help-block" ng-show="' + formFieldName +
           '.$invalid">' + attrs['taxHelp'] + '</span>';
       }
-      var node = '<div><div class="form-group has-feedback" ' + ngClassBlock + '>' +
-          labelBlock + inputBlock + glyphBlock + helpBlock + '</div></div>';
-      var e = angular.element(node);
-      $compile(e.contents());
-      element.replaceWith(e);
+      var node = '<div class="form-group has-feedback" ' + ngClassBlock + '>' +
+          labelBlock + inputBlock + glyphBlock + helpBlock + '</div>';
+      element.html(node);
     }
   }
 });

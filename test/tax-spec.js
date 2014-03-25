@@ -48,14 +48,15 @@ describe('TaxEstimatorCtrl', function() {
           '<form name="abc"><tax-text-input ng-model="def" tax-label="Field">' +
           '</tax-text-input></form>')($scope);
       var templateAsHtml = template.html();
-      expect(templateAsHtml).toBe('<div class="ng-pristine ng-valid">' +
-          '<div class="form-group has-feedback ng-scope" ' +
+      expect(templateAsHtml).toBe(
+          '<tax-text-input ng-model="def" tax-label="Field" class="ng-pristine ng-valid">' +
+          '<div class="form-group has-feedback" ' +
           'ng-class="{\'has-error\': abc.def.$dirty &amp;&amp; abc.def.$invalid}">' +
           '<label for="def" class="control-label">Field</label>' +
           '<input id="def" name="def" ng-model="def" class="form-control ng-pristine ng-valid">' +
           '<span class="glyphicon form-control-feedback" ' +
           'ng-class="abc.def.$invalid ? \'glyphicon-remove\' : \'glyphicon-ok\'"></span>' +
-          '</div></div>');
+          '</div></tax-text-input>');
     });
     it('should include extra attributes', function() {
       var template = $compile(
