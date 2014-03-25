@@ -189,6 +189,18 @@ describe('TaxEstimatorCtrl', function() {
     });
 
     it('numAllowances should calculate correctly', function() {
+      setBasics('single');
+      $scope.basics.multipleJobs = true;
+      expect($scope.numAllowances()).toBe(1);
+    });
+
+    it('numAllowances should calculate correctly', function() {
+      setBasics('single');
+      $scope.basics.spouseJob = true;
+      expect($scope.numAllowances()).toBe(2);
+    });
+
+    it('numAllowances should calculate correctly', function() {
       setBasics('joint');
       $scope.basics.multipleJobs = false;
       $scope.basics.spouseJob = false;
